@@ -1,0 +1,51 @@
+//
+//  DifGameScene.m
+//  HappyDifference
+//
+//  Created by zzyy on 11-10-29.
+//  Copyright __MyCompanyName__ 2011. All rights reserved.
+//
+
+// Import the interfaces
+#import "ClassicDifGameScene.h"
+#import "ClassicDifGameLayer.h"
+// DifGameScene implementation
+@implementation ClassicDifGameScene
+
+// on "init" you need to initialize your instance
+-(id) initWithStage:(int) iCurStage andLevel:(int)iLevel
+{
+	// always call "super" init
+	// Apple recommends to re-assign "self" with the "super" return value
+	if( (self=[super init] )) {
+        
+        //temp 
+        int randLevel =0;
+        ClassicDifGameLayer* gameLayer = [[[ClassicDifGameLayer alloc]initWithStage:iCurStage andLevel:randLevel] autorelease];
+		[self addChild:gameLayer z:0 tag:tag_gamelayer];
+	}
+	return self;
+}
+-(id) initWithReadyGo:(int) iCurStage andLevel:(int) iLevel
+{
+    if( (self=[super init] )) {
+        
+        //temp 
+        int randLevel =0;
+        ClassicDifGameLayer* gameLayer = [[[ClassicDifGameLayer alloc]initWithReadyGo:iCurStage andLevel:randLevel] autorelease];
+		[self addChild:gameLayer z:0 tag:tag_gamelayer];
+	}
+	return self;
+}
+// on "dealloc" you need to release all your retained objects
+- (void) dealloc
+{
+	// in case you have something to dealloc, do it in this method
+	// in this particular example nothing needs to be released.
+	// cocos2d will automatically release all the children (Label)
+	
+	// don't forget to call "super dealloc"
+    [self removeAllChildrenWithCleanup:YES];
+	[super dealloc];
+}
+@end

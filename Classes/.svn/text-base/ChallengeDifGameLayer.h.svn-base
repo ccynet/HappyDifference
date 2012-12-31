@@ -1,0 +1,22 @@
+//
+//  ChallengeDifGameLayer.h
+//  HappyDifference
+//
+//  Created by zzyy on 11-12-18.
+//  Copyright 2011年 __MyCompanyName__. All rights reserved.
+//
+
+#import "DifGameLayerBase.h"
+
+enum ChallengeDifGameLayer_tag_name
+{
+    tag_score,
+}ChallengeDifGameLayer_tag_name;
+
+@interface ChallengeDifGameLayer : DifGameLayerBase {
+    int         m_iNewScore;
+    int         m_iOldScore;
+}
+-(id) initWithStage:(int)iStage andLevel:(int) iLevel;
+-(id) initWithReadyGo:(int)iStage andLevel:(int) iLevel;
+@end

@@ -1,0 +1,44 @@
+//
+//  GameCenterKit.h
+//  HappyDifference
+//
+//  Created by zzyy on 11-12-14.
+//  Copyright (c) 2011年 __MyCompanyName__. All rights reserved.
+//
+
+#import <GameKit/GameKit.h>
+
+@protocol GameCenterKitDelegate
+
+-(void) matchStarted;
+-(void) matchEnded;
+-(void) match:(GKMatch*)match 
+        didReceiveData:(NSData*)data
+        fromPlayer:(NSString *)playerID;
+
+@end
+
+@interface GameCenterKit : NSObject <GKMatchmakerViewControllerDelegate,GKMatchDelegate>
+{
+    BOOL    m_gameCenterAvailable;
+    BOOL    m_userAuthenticated;
+    
+    UIViewController*   m_presentingViewController;
+    GKMatch*            m_match;
+    BOOL                m_matchStarted;
+    id<GameCenterKitDelegate>   m_delegate;
+}
+
++(GameCenterKit*) sharedInstance;
+-(void) authenticateLocalLocalUser;
+-(void) findMatchWithMinPlayers:(int) minPlayers maxPlayers:(int)maxPlayers 
+                 viewController:(UIViewController*) viewController
+                       delegate:(id<GameCenterKitDelegate>) theDelegate;
+
+
+@property(assign, readonly) BOOL    m_gameCenterAvailable;
+@property(retain)   UIViewController* m_presentingViewController;
+@property(retain)   GKMatch*        m_match;
+@property(assign)   id<GameCenterKitDelegate> m_delegate;
+
+@end

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="1" height="1" tilewidth="1977" tileheight="768">
+ <tileset firstgid="1" name="Stagebg" tilewidth="1977" tileheight="768">
+  <image source="Stagebg.png" width="1977" height="768"/>
+ </tileset>
+ <layer name="bk" width="1" height="1">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA2NkYGAAAHm4+JkEAAAA
+  </data>
+ </layer>
+</map>

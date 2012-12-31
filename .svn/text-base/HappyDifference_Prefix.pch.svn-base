@@ -1,0 +1,11 @@
+//
+// Prefix header for all source files of the 'HappyDifference' target in the 'HappyDifference' project
+//
+
+#ifdef __OBJC__
+	#import <Foundation/Foundation.h>
+	#import <UIKit/UIKit.h>
+
+	//add for cocos2d by zy
+	#import "cocos2d.h"
+#endif

@@ -1,0 +1,240 @@
+//
+//  MainMenuLayer.m
+//  Gameproject
+//
+//  Created by easystudio on 11/15/11.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//
+
+#import "MainMenuLayer.h"
+#import "UserData.h"
+#import "AboutScene.h"
+#import "SplashLayer.h"
+#import "GameCtl.h"
+#import "SimpleAudioEngine.h"
+
+
+@implementation MainMenuLayer
+
+-(void) doubleMan
+{
+#define LEFT_MAN_OUT_TIME 1.5
+#define RIGHT_MAN_OUT_TIME 1
+    
+    //leftman
+    CCSprite* leftman = [CCSprite spriteWithFile:@"leftman.png"];
+    [leftman setPosition:CGPointMake(0, 0)];
+    [self addChild:leftman z:0];
+    CCAction* easeActionleft = [CCEaseBounceOut actionWithAction:[CCMoveTo actionWithDuration:LEFT_MAN_OUT_TIME position:ccp(250,250)]];
+    [leftman runAction:easeActionleft];
+    
+    //rightman
+    CCSprite* rightman = [CCSprite spriteWithFile:@"rightman.png"];
+    [rightman setPosition:CGPointMake(1024, 0)];
+    [self addChild:rightman z:0];
+    CCAction* easeActionright = [CCEaseBounceOut actionWithAction:[CCMoveTo actionWithDuration:RIGHT_MAN_OUT_TIME position:ccp(1024-250,250)]];
+    [rightman runAction:easeActionright];
+}
+-(void) bkground
+{
+    CGSize	winSize = [[CCDirector sharedDirector] winSize];
+    //Cover top
+    CCSprite* bgsprite = [CCSprite spriteWithFile:@"CoverTop.png"];
+    [bgsprite setPosition:CGPointMake(winSize.width/2, winSize.height/2)];
+    [self addChild:bgsprite];
+}
+-(void) button
+{
+    CGSize	winSize = [[CCDirector sharedDirector] winSize];
+
+    //facebook&twitter
+    CCMenuItemImage* facebookBtn = [CCMenuItemImage itemFromNormalImage:@"FacebookClick.png" selectedImage:@"FacebookClick.png" disabledImage:@"" target:self selector:@selector(facebook)];
+    [facebookBtn setPosition:ccp(915-512, 355-384)];
+
+    CCMenuItemImage* twitterBtn = [CCMenuItemImage itemFromNormalImage:@"TwitterClick.png" selectedImage:@"TwitterClick.png" disabledImage:@"" target:self selector:@selector(twitter)];
+    [twitterBtn setPosition:ccp(838-512, 400-384)];
+    
+    //play
+    CCMenuItemImage* playBtn = [CCMenuItemImage itemFromNormalImage:@"play.png" selectedImage:@"play.png" disabledImage:@"" target:self selector:@selector(play)];
+    [playBtn setPosition:CGPointMake(3, -180)];
+    
+    //ring
+    CCMenuItemImage* ringBtn;
+    if([UserData sharedUserData].m_isSound)
+    {
+        ringBtn = [CCMenuItemImage itemFromNormalImage:@"ring.png" selectedImage:@"ringstop.png" disabledImage:@"" target:self selector:@selector(ring:)];
+    }
+    else
+    {
+        ringBtn = [CCMenuItemImage itemFromNormalImage:@"ringstop.png" selectedImage:@"ring.png" disabledImage:@"" target:self selector:@selector(ring:)];
+    }
+    [ringBtn setPosition:ccp(400, 645-384)];//ccp(155-512, 645-384)];
+    
+    //About
+    CCMenuItemImage* aboutBtn = [CCMenuItemImage itemFromNormalImage:@"AboutUs.png" selectedImage:@"AboutUs.png" disabledImage:@"" target:self selector:@selector(about)];
+    [aboutBtn setPosition:ccp(88-512, 365-384)];
+    
+    
+    CCMenu * menu = [CCMenu menuWithItems:facebookBtn, twitterBtn, playBtn, ringBtn, aboutBtn, nil];
+    [self addChild:menu];
+}
+-(void) fire
+{
+    CGSize	winSize = [[CCDirector sharedDirector] winSize];
+
+    //fire animation
+    NSArray*    fireFrameName =[NSArray arrayWithObjects:@"Fire.png",@"FireBig.png", nil];
+    NSMutableArray* frames = [NSMutableArray arrayWithCapacity:[fireFrameName count]];
+    for(int i =0; i<[fireFrameName count]; i++)
+    {
+        NSString* file = [fireFrameName objectAtIndex:i];
+        CCTexture2D* texture = [[CCTextureCache sharedTextureCache] addImage:file];
+        
+        CGSize texSize = texture.contentSize;
+        CGRect texRect = CGRectMake(0, 0, texSize.width, texSize.height);
+        CCSpriteFrame* frame = [CCSpriteFrame frameWithTexture:texture rect:texRect];
+        [frames addObject:frame];
+    }
+    CCAnimation*  anim = [CCAnimation animationWithName:@"fire animation" delay:0.1f frames:frames];
+    CCAnimate* animate = [CCAnimate actionWithAnimation:anim];
+    CCSprite* fireSprite = [[[CCSprite alloc] init]autorelease];
+    [self addChild:fireSprite];
+    [fireSprite setPosition:CGPointMake(winSize.width/2+20, winSize.height/2-20+65)];
+    CCRepeatForever*  fireAction = [CCRepeatForever actionWithAction:animate];
+    [fireSprite runAction:fireAction];
+    //end
+}
+-(void) flash
+{
+    //flash animation
+    CGSize	winSize = [[CCDirector sharedDirector] winSize];
+    CCSpriteBatchNode* batch = [CCSpriteBatchNode batchNodeWithFile:@"Flash.png"];
+    [self addChild:batch];
+#define flash_num 3
+    CGPoint poitAry[flash_num]={ccp(winSize.width*3/4, winSize.height*3/4),ccp(winSize.width*1/4, winSize.height*1/2),
+                                ccp(winSize.width*3/4+50, winSize.height*3/4-50),};
+    for(int iCnt=0; iCnt < flash_num; iCnt++)
+    {
+        CCSprite* flash1 = [CCSprite spriteWithFile:@"Flash.png"];
+        [batch addChild:flash1];
+        [flash1 setPosition:poitAry[iCnt]];
+        CCSequence* flash1Seq = [CCSequence actions:[CCFadeOut actionWithDuration:0.3f],[CCFadeIn actionWithDuration:0.3f], nil];
+        //        CCSequence* flash1Seq = [CCSequence actions:[CCScaleTo actionWithDuration:0.3f scale:0.1],[CCScaleTo actionWithDuration:0.3f scale:1], nil];
+        CCRepeatForever* flashAction = [CCRepeatForever actionWithAction:flash1Seq];
+        [flash1 runAction:flashAction];
+    }
+
+}
+-(void) snow
+{
+    //CCParticleSystem *tempSystem = [ARCH_OPTIMAL_PARTICLE_SYSTEM particleWithFile:@"snow.plist"];
+    //read plist to memory
+    NSString* rootpath =[[NSBundle mainBundle] pathForResource:@"snowDic" ofType:@"plist"];
+    NSDictionary* snowDic = [NSDictionary dictionaryWithContentsOfFile:rootpath];
+    CCTexture2D* snowTexture = [[CCTextureCache sharedTextureCache] addImage:@"snow.png"];
+    CCParticleSystem *tempSystem = [[ARCH_OPTIMAL_PARTICLE_SYSTEM alloc ]initWithDictionary:snowDic withTexture:snowTexture];
+    //tempSystem.positionType=kCCPositionTypeFree;
+    tempSystem.positionType=kCCPositionTypeRelative;
+    tempSystem.position=ccp(512,768);   
+    [self addChild:tempSystem];
+    [tempSystem release];
+}
+-(void)doReatAction1:(CCSprite*) titleWord
+{
+#define title_x 520
+#define title_y 600
+
+	CCMoveTo* actDown = [CCMoveTo actionWithDuration:2 position:ccp(title_x, title_y)];
+	CCMoveTo* actUp = [CCMoveTo actionWithDuration:2 position:ccp(title_x, title_y+30)];
+	CCRepeatForever	*repeatAction1 = [CCRepeatForever actionWithAction:
+									  [CCSequence actions:
+									   actUp,actDown,nil
+									   ]
+									  ];
+	[titleWord runAction:repeatAction1];
+}
+-(void) tilte
+{
+#define title_x 520
+#define title_y 600
+    CCSprite* title = [CCSprite spriteWithFile:@"title.png"];
+    CCMoveTo* actDown1 =[CCSequence actions: 
+                         [CCMoveTo actionWithDuration:0.5 position:ccp(520,600)]
+                         ,[CCDelayTime actionWithDuration:0.5]
+                         ,[CCCallFuncN actionWithTarget:self selector:@selector(doReatAction1:)],nil
+                         ];
+    [title runAction:actDown1];
+    [self addChild:title];
+    [title setPosition:CGPointMake(title_x, title_y)];
+}
+
+-(id) init
+{
+	if ((self = [super init])) {
+
+        //[self bkground];
+        //[self doubleMan];
+
+        [self bkground];
+        [self snow];
+        [self tilte];
+        [self button];
+        //[self flash];
+        
+	}
+	
+	return self;
+}
+-(void) facebook
+{
+    [[SimpleAudioEngine sharedEngine]playEffect:BTN_MUSIC];
+
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.facebook.com/pages/Freeday/275372309175067"]];
+}
+-(void) twitter
+{
+    [[SimpleAudioEngine sharedEngine]playEffect:BTN_MUSIC];
+
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://twitter.com/freeday3"]];
+}
+
+-(void) play
+{
+    [[SimpleAudioEngine sharedEngine]playEffect:BTN_MUSIC];
+    [[GameCtl sharedGameCtl] runSelectStageScene];
+    //[[GameCtl sharedGameCtl] runChallengeDifGameScene];
+}
+
+-(void) ring:(CCMenuItemImage*) btn
+{
+
+    [[SimpleAudioEngine sharedEngine]playEffect:BTN_MUSIC];
+
+	if ([UserData sharedUserData].m_isSound == 0) {
+		CCSprite* ps =[CCSprite spriteWithFile:[NSString stringWithFormat:@"ring.png"]];
+		[btn setNormalImage:(CCNode <CCRGBAProtocol>*)ps];
+        [[GameCtl sharedGameCtl]openBkMusic];
+	}
+	else {
+		CCSprite* ps =[CCSprite spriteWithFile:[NSString stringWithFormat:@"ringstop.png"]];
+		[btn setNormalImage:(CCNode <CCRGBAProtocol>*)ps];
+		//[btn setPosition:ccp(100,100)];
+		//[btn itemFromNormalImage:MENULAYER_BTNVOICEON selectedImage:MENULAYER_BTNVOICEON disabledImage:MENULAYER_BTNVOICEON target:self selector:@selector(selectBtnVoiceON:)];
+        [[GameCtl sharedGameCtl]closeBkMusic];
+
+	}
+}
+
+-(void) about
+{
+    [[SimpleAudioEngine sharedEngine]playEffect:BTN_MUSIC];
+
+    [[CCDirector sharedDirector] replaceScene:[AboutScene scene]];
+}
+
+-(void) dealloc
+{
+    [self removeAllChildrenWithCleanup:YES];
+	[super dealloc];
+}
+@end
